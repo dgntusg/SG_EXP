@@ -1818,23 +1818,33 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
 
     // Provider 1: Google Gemini (Recommended)
     if (aiProvider === 'gemini') {
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { inline_data: { mime_type: mediaType, data: base64 } },
-              { text: prompt }
-            ]
-          }]
-        })
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message || 'Gemini API Error');
-      const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const clean = text.replace(/```json|```/g, '').trim();
-      parsed = JSON.parse(clean);
+      const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+      let lastErr = null;
+      for (const model of models) {
+        try {
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{
+                parts: [
+                  { inline_data: { mime_type: mediaType, data: base64 } },
+                  { text: prompt }
+                ]
+              }]
+            })
+          });
+          const data = await res.json();
+          if (data.error) throw new Error(data.error.message || 'Gemini API Error');
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+          const clean = text.replace(/```json|```/g, '').trim();
+          parsed = JSON.parse(clean);
+          break; // Success!
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      if (!parsed && lastErr) throw lastErr;
     }
     // Provider 2: Anthropic Claude
     else if (aiProvider === 'anthropic') {
