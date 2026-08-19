@@ -1577,10 +1577,6 @@ function catLabel(id) {
   const c = CATEGORIES.find(c => c.id === id);
   return c ? c.label : 'Miscellaneous';
 }
-function catIcon(id) {
-  const c = CATEGORIES.find(c => c.id === id);
-  return c ? c.icon : '📦';
-}
 function catColor(id) {
   const c = CATEGORIES.find(c => c.id === id);
   return c ? c.color : '#6B7280';
