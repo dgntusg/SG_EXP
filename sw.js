@@ -1,17 +1,10 @@
-const CACHE_NAME = 'sg-ledger-v1';
+const CACHE_NAME = 'sg-ledger-v3';
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE).catch(() => {});
-    })
-  );
   self.skipWaiting();
 });
 
@@ -31,13 +24,18 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass-through Google Apps Script API calls and AI endpoints directly to network
+  // Always fetch index.html and APIs fresh from network to prevent stale caching
   if (
+    event.request.mode === 'navigate' ||
+    event.request.url.includes('index.html') ||
     event.request.url.includes('script.google.com') ||
     event.request.url.includes('api.anthropic.com') ||
     event.request.url.includes('generativelanguage.googleapis.com') ||
     event.request.url.includes('api.openai.com')
   ) {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
     return;
   }
 
@@ -53,11 +51,6 @@ self.addEventListener('fetch', (event) => {
           cache.put(event.request, responseToCache);
         });
         return networkResponse;
-      }).catch(() => {
-        // Fallback to cache index.html for navigation
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
       });
     })
   );
