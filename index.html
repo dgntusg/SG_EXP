@@ -15,12 +15,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <script>
-  // Force purge old PWA and Service Worker caches
+  // Aggressively unregister all old service workers and purge all caches
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(regs => {
+      for (let reg of regs) reg.unregister();
+    });
+  }
   if ('caches' in window) {
     caches.keys().then(keys => {
-      keys.forEach(k => {
-        if (k !== 'sg-ledger-v4') caches.delete(k);
-      });
+      keys.forEach(k => caches.delete(k));
     });
   }
 </script>
@@ -83,7 +86,7 @@
   body {
     font-family: var(--font-body);
     color: var(--ink);
-    padding: max(20px, env(safe-area-inset-top)) 14px max(50px, env(safe-area-inset-bottom));
+    padding: max(20px, env(safe-area-inset-top)) 14px max(20px, env(safe-area-inset-bottom));
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -2729,12 +2732,6 @@ function init() {
   loadLocalCache();
   renderCurrentTab();
   syncWithSheet();
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then((reg) => {
-      reg.update();
-    }).catch(() => {});
-  }
 }
 
 init();
