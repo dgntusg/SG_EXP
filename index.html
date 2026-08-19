@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SG Ledger">
 <meta name="theme-color" content="#EAE3D2">
-<title>Singapore Ledger • Daily Spends</title>
+<title>Singapore Ledger • Daily Spends & Analytics</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,7 +26,7 @@
     --stamp-red: #B23A2E;
     --stamp-green: #2F6E3B;
     --stamp-blue: #235789;
-    --accent: #B23A2E;
+    --stamp-gold: #9B6A00;
     --shadow: rgba(38, 33, 25, 0.08);
     --shadow-deep: rgba(38, 33, 25, 0.16);
     --radius: 3px;
@@ -46,7 +46,7 @@
     --stamp-red: #E2584B;
     --stamp-green: #48A868;
     --stamp-blue: #5C9CE6;
-    --accent: #E2584B;
+    --stamp-gold: #E5A83B;
     --shadow: rgba(0, 0, 0, 0.35);
     --shadow-deep: rgba(0, 0, 0, 0.55);
   }
@@ -62,7 +62,7 @@
     --stamp-red: #DC2626;
     --stamp-green: #16A34A;
     --stamp-blue: #2563EB;
-    --accent: #111827;
+    --stamp-gold: #D97706;
     --shadow: rgba(0, 0, 0, 0.05);
     --shadow-deep: rgba(0, 0, 0, 0.1);
   }
@@ -72,18 +72,18 @@
   body {
     font-family: var(--font-body);
     color: var(--ink);
-    padding: max(24px, env(safe-area-inset-top)) 14px max(40px, env(safe-area-inset-bottom));
+    padding: max(20px, env(safe-area-inset-top)) 14px max(50px, env(safe-area-inset-bottom));
     min-height: 100vh;
     display: flex;
     justify-content: center;
   }
 
-  .wrap { width: 100%; max-width: 460px; margin: 0 auto; position: relative; }
+  .wrap { width: 100%; max-width: 480px; margin: 0 auto; position: relative; }
 
   /* HEADER */
   .header {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     position: relative;
     padding-top: 4px;
   }
@@ -109,19 +109,19 @@
   .icon-btn:hover { color: var(--ink); background: var(--paper-dim); }
   .eyebrow {
     font-family: var(--font-display);
-    font-size: 12.5px;
+    font-size: 12px;
     letter-spacing: 3px;
     color: var(--ink-soft);
     text-transform: uppercase;
   }
   .title {
     font-family: var(--font-display);
-    font-size: 27px;
+    font-size: 26px;
     margin-top: 2px;
     letter-spacing: 1px;
   }
 
-  /* SYNC STATUS PILL */
+  /* SYNC STATUS */
   .sync-bar {
     display: flex;
     align-items: center;
@@ -131,7 +131,7 @@
     font-size: 11px;
     color: var(--ink-soft);
     letter-spacing: 0.5px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     cursor: pointer;
   }
   .sync-dot {
@@ -145,17 +145,51 @@
   .sync-bar.err .sync-dot { background: var(--stamp-red); }
   @keyframes pulse { from { opacity: 0.3; } to { opacity: 1; } }
 
-  /* MAIN RECEIPT CARD */
+  /* TAB NAVIGATION SWITCHER */
+  .tab-nav {
+    display: flex;
+    background: var(--paper-dim);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 3px;
+    margin-bottom: 14px;
+    gap: 3px;
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 4px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active {
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+
+  /* MAIN RECEIPT CARD CONTAINER */
   .receipt-card {
     background: var(--paper);
     box-shadow: 0 2px 4px var(--shadow), 0 10px 30px var(--shadow-deep);
     border-radius: var(--radius);
     position: relative;
-    padding: 22px 0 16px;
+    padding: 20px 0 16px;
     transition: background 0.25s ease;
   }
 
-  /* Jagged Sawtooth Edge on Top & Bottom for Authentic Receipt Look */
+  /* Sawtooth Receipt Edge */
   .receipt-card::before, .receipt-card::after {
     content: "";
     position: absolute;
@@ -186,8 +220,8 @@
     border: none;
     cursor: pointer;
     color: var(--ink-soft);
-    font-size: 16px;
-    padding: 6px 12px;
+    font-size: 15px;
+    padding: 5px 10px;
     border-radius: 3px;
     font-family: var(--font-mono);
     transition: all 0.15s ease;
@@ -201,11 +235,16 @@
     text-transform: uppercase;
   }
 
+  /* TAB CONTENT PANELS */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; animation: fadeIn 0.2s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
   /* ACTION BUTTONS */
   .btn-row {
     display: flex;
     gap: 8px;
-    padding: 0 20px 16px;
+    padding: 0 20px 14px;
   }
   .btn-primary {
     flex: 2;
@@ -261,7 +300,6 @@
     cursor: pointer;
     transition: all 0.15s ease;
   }
-  .btn-icon-only:hover { border-color: var(--ink-soft); }
 
   /* DIVIDERS */
   .stub-divider {
@@ -282,16 +320,16 @@
   .stub-divider::before { left: -33px; }
   .stub-divider::after { right: -33px; }
 
-  /* TOTAL & BUDGET SUMMARY */
+  /* TOTAL & STATS BLOCK */
   .total-block {
-    padding: 18px 20px 10px;
+    padding: 16px 20px 10px;
     text-align: center;
   }
   .total-label {
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--ink-soft);
-    letter-spacing: 2.5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
   }
   .total-amount {
@@ -302,8 +340,9 @@
     letter-spacing: -0.5px;
   }
 
+  /* BUDGET BAR */
   .budget-container {
-    margin: 12px 0 4px;
+    margin: 10px 0 4px;
     padding: 10px 12px;
     background: var(--paper-dim);
     border: 1px solid var(--line-light);
@@ -339,7 +378,7 @@
     margin-top: 5px;
   }
 
-  /* CATEGORY BREAKDOWN */
+  /* CATEGORY BARS */
   .cats { padding: 12px 20px 4px; }
   .cat-row { margin-bottom: 9px; cursor: pointer; }
   .cat-row-top {
@@ -364,16 +403,13 @@
     transition: width 0.35s ease;
   }
 
-  /* SEARCH & FILTER CONTROLS */
+  /* FILTER BAR */
   .filter-bar {
     padding: 10px 20px 4px;
     display: flex;
     gap: 8px;
   }
-  .search-input-wrap {
-    flex: 1;
-    position: relative;
-  }
+  .search-input-wrap { flex: 1; position: relative; }
   .search-input {
     width: 100%;
     font-family: var(--font-mono);
@@ -411,26 +447,26 @@
   }
 
   /* ITEMS LIST */
-  .items { padding: 12px 20px 18px; }
+  .items { padding: 10px 20px 18px; }
   .empty {
     text-align: center;
     color: var(--ink-soft);
     font-family: var(--font-mono);
     font-size: 12.5px;
-    padding: 28px 0;
+    padding: 26px 0;
     line-height: 1.6;
   }
   .item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 0;
+    padding: 9px 0;
     border-bottom: 1px dotted var(--line);
     animation: printIn 0.22s ease-out;
     cursor: pointer;
     transition: background 0.15s ease;
   }
-  .item:hover { background: var(--paper-dim); border-radius: 2px; margin: 0 -4px; padding: 10px 4px; }
+  .item:hover { background: var(--paper-dim); border-radius: 2px; margin: 0 -4px; padding: 9px 4px; }
   @keyframes printIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
   .item .date {
@@ -443,14 +479,11 @@
   }
   .item .mid { flex: 1; min-width: 0; }
   .item .merchant {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
   .item .cat {
     font-family: var(--font-mono);
@@ -467,19 +500,15 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 140px;
+    max-width: 130px;
   }
   .item .amt {
     font-family: var(--font-mono);
-    font-size: 14.5px;
+    font-size: 14px;
     font-weight: 700;
     flex-shrink: 0;
   }
-  .item-actions {
-    display: flex;
-    gap: 2px;
-    flex-shrink: 0;
-  }
+  .item-actions { display: flex; gap: 2px; flex-shrink: 0; }
   .item .action-btn {
     background: none;
     border: none;
@@ -493,7 +522,200 @@
   }
   .item .action-btn:hover { color: var(--stamp-red); background: var(--paper-dim); }
 
-  /* BARCODE GRAPHIC AT BOTTOM OF RECEIPT */
+  /* =========================================================================
+     CHARTS & ANALYTICS TAB STYLES
+     ========================================================================= */
+  .analytics-section {
+    padding: 16px 20px 20px;
+  }
+  .chart-card {
+    background: var(--paper-dim);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .chart-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* SVG Chart Bars */
+  .chart-svg-wrap {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .daily-bars-svg {
+    width: 100%;
+    height: 140px;
+    display: block;
+  }
+  .chart-bar-rect {
+    fill: var(--stamp-red);
+    rx: 2px;
+    transition: fill 0.2s ease;
+    cursor: pointer;
+  }
+  .chart-bar-rect:hover { fill: var(--ink); }
+  .chart-axis-text {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    fill: var(--ink-soft);
+    text-anchor: middle;
+  }
+
+  /* Donut / Category Distribution */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .donut-svg {
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+  }
+  .donut-legend {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+  .legend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .legend-color-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  /* Month-over-Month Comparison */
+  .mom-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .mom-label { width: 70px; color: var(--ink-soft); }
+  .mom-bar-wrap { flex: 1; height: 16px; background: var(--paper); border-radius: 3px; overflow: hidden; position: relative; }
+  .mom-bar-fill { height: 100%; background: var(--stamp-blue); border-radius: 3px; }
+  .mom-val { width: 75px; text-align: right; font-weight: 600; }
+
+  /* =========================================================================
+     CALENDAR HEAT MAP TAB
+     ========================================================================= */
+  .calendar-section { padding: 14px 20px 20px; }
+  .cal-grid-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-cell {
+    background: var(--paper-dim);
+    border: 1px solid var(--line-light);
+    border-radius: 4px;
+    min-height: 48px;
+    padding: 3px 4px;
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .cal-cell:hover { border-color: var(--stamp-red); transform: translateY(-1px); }
+  .cal-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+  .cal-cell.has-spend { background: rgba(178, 58, 46, 0.08); border-color: rgba(178, 58, 46, 0.25); }
+  .cal-cell.today { outline: 2px solid var(--ink); }
+  .cal-date-num { font-size: 10px; color: var(--ink-soft); }
+  .cal-spend-val {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--stamp-red);
+    text-align: right;
+    line-height: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* =========================================================================
+     INSIGHTS TAB
+     ========================================================================= */
+  .insights-section { padding: 14px 20px 20px; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .kpi-box {
+    background: var(--paper-dim);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 10px;
+    font-family: var(--font-mono);
+  }
+  .kpi-title { font-size: 10px; color: var(--ink-soft); letter-spacing: 1px; text-transform: uppercase; }
+  .kpi-val { font-size: 18px; font-weight: 700; margin-top: 4px; }
+  .kpi-sub { font-size: 9.5px; color: var(--ink-soft); margin-top: 2px; }
+
+  .top-merchants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--font-mono);
+  }
+  .top-merchant-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 6px 8px;
+    background: var(--paper-dim);
+    border-radius: 3px;
+  }
+  .merchant-rank {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-right: 6px;
+  }
+
+  /* BARCODE FOOTER */
   .receipt-footer {
     padding: 10px 20px 8px;
     text-align: center;
@@ -508,11 +730,7 @@
     opacity: 0.75;
     max-width: 220px;
   }
-  .barcode-bar {
-    background: var(--ink);
-    height: 100%;
-    width: 2px;
-  }
+  .barcode-bar { background: var(--ink); height: 100%; width: 2px; }
   .footer-caption {
     font-family: var(--font-mono);
     font-size: 9.5px;
@@ -532,11 +750,10 @@
     z-index: 100;
   }
   .modal-bg.open { display: flex; animation: fadeIn 0.15s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   .modal {
     width: 100%;
-    max-width: 460px;
+    max-width: 480px;
     background: var(--paper);
     border-radius: 8px 8px 0 0;
     padding: 22px 22px max(24px, env(safe-area-inset-bottom));
@@ -555,13 +772,7 @@
     font-size: 17px;
     letter-spacing: 0.5px;
   }
-  .modal-head button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--ink-soft);
-    padding: 4px;
-  }
+  .modal-head button { background: none; border: none; cursor: pointer; color: var(--ink-soft); padding: 4px; }
 
   .field { margin-bottom: 13px; }
   .field label {
@@ -586,19 +797,12 @@
     transition: border-color 0.15s ease;
   }
   .field textarea { resize: vertical; min-height: 54px; }
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--stamp-red);
-  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--stamp-red); }
 
   .row2 { display: flex; gap: 10px; }
   .row2 .field { flex: 1; }
 
-  .cat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-top: 4px;
-  }
+  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
   .cat-btn {
     font-family: var(--font-mono);
     font-size: 12px;
@@ -614,18 +818,9 @@
     gap: 6px;
     transition: all 0.15s ease;
   }
-  .cat-btn.active {
-    background: var(--ink);
-    color: var(--paper);
-    border-color: var(--ink);
-    font-weight: 600;
-  }
+  .cat-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); font-weight: 600; }
 
-  .modal-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 16px;
-  }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
   .save-btn {
     flex: 2;
     display: flex;
@@ -662,7 +857,7 @@
     cursor: pointer;
   }
 
-  /* ERROR / NOTICE TOAST */
+  /* TOAST */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -723,10 +918,9 @@
   }
   .quick-pill:hover { border-color: var(--ink); }
 
-  /* PRINT TAPE VIEW */
   @media print {
     body { background: #FFF !important; padding: 0 !important; }
-    .header-actions, .btn-row, .filter-bar, .month-nav button, .item-actions, .modal-bg, .sync-bar { display: none !important; }
+    .header-actions, .tab-nav, .btn-row, .filter-bar, .month-nav button, .item-actions, .modal-bg, .sync-bar { display: none !important; }
     .receipt-card { box-shadow: none !important; border: 1px solid #000; }
     .receipt-card::before, .receipt-card::after { display: none !important; }
   }
@@ -753,82 +947,189 @@
   </div>
 
   <!-- SYNC STATUS -->
-  <div class="sync-bar" id="syncStatusWrap" title="Click to force refresh">
+  <div class="sync-bar" id="syncStatusWrap" title="Click to force sync">
     <span class="sync-dot" id="syncDot"></span>
     <span id="syncStatus">connecting…</span>
   </div>
 
-  <!-- RECEIPT CARD -->
+  <!-- TAB SWITCHER BUTTONS -->
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="tapeTab">
+      <span>🧾</span> <span>Tape</span>
+    </button>
+    <button class="tab-btn" data-tab="chartsTab">
+      <span>📊</span> <span>Graphs</span>
+    </button>
+    <button class="tab-btn" data-tab="calTab">
+      <span>📅</span> <span>Calendar</span>
+    </button>
+    <button class="tab-btn" data-tab="insightsTab">
+      <span>💡</span> <span>Insights</span>
+    </button>
+  </div>
+
+  <!-- RECEIPT CARD WRAPPER -->
   <div class="receipt-card">
-    <!-- Month Navigation -->
+    <!-- Month Navigation Header (Common to all tabs) -->
     <div class="month-nav">
       <button class="nav-arrow" id="prevMonth">&#8592; PREV</button>
-      <div class="month-label" id="monthLabel">JULY 2026</div>
+      <div class="month-label" id="monthLabel">AUGUST 2026</div>
       <button class="nav-arrow" id="nextMonth">NEXT &#8594;</button>
     </div>
 
-    <!-- Quick Action Buttons -->
-    <div class="btn-row">
-      <button class="btn-primary" id="scanBtn">
-        <span id="scanIcon">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-        </span>
-        <span id="scanLabel">SNAP RECEIPT</span>
-      </button>
-      <button class="btn-secondary" id="addBtn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
-        <span>ADD</span>
-      </button>
-      <button class="btn-icon-only" id="voiceBtn" title="Voice / Quick Log">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      </button>
-      <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
+    <!-- =========================================================================
+         TAB 1: TAPE (DAILY LEDGER)
+         ========================================================================= -->
+    <div class="tab-pane active" id="tapeTab">
+      <!-- Quick Action Buttons -->
+      <div class="btn-row">
+        <button class="btn-primary" id="scanBtn">
+          <span id="scanIcon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          </span>
+          <span id="scanLabel">SNAP RECEIPT</span>
+        </button>
+        <button class="btn-secondary" id="addBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
+          <span>ADD</span>
+        </button>
+        <button class="btn-icon-only" id="voiceBtn" title="Voice / Quick Natural Log">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+        </button>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
+      </div>
+
+      <div id="errBox"></div>
+
+      <div class="stub-divider"></div>
+
+      <!-- Total Spends & Budget Tracker -->
+      <div class="total-block">
+        <div class="total-label">Total Spend This Month</div>
+        <div class="total-amount" id="totalAmount">S$0.00</div>
+
+        <div class="budget-container" id="budgetBox" style="display:none">
+          <div class="budget-header">
+            <span>BUDGET: <b id="budgetLimitText">S$0</b></span>
+            <span id="budgetPercentText">0%</span>
+          </div>
+          <div class="budget-bar-track">
+            <div class="budget-bar-fill" id="budgetBarFill" style="width: 0%"></div>
+          </div>
+          <div class="budget-stats">
+            <span id="budgetRemainingText">Remaining: S$0.00</span>
+            <span id="budgetPaceText">Daily Pace: S$0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Bar Chart -->
+      <div class="cats" id="catsBox"></div>
+
+      <div class="stub-divider"></div>
+
+      <!-- Filter & Search Bar -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search merchant, note...">
+          <button class="search-clear" id="searchClear">&times;</button>
+        </div>
+        <select class="cat-filter-select" id="catFilter">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+
+      <!-- Expense Line Items -->
+      <div class="items" id="itemsBox"></div>
     </div>
 
-    <div id="errBox"></div>
-
-    <div class="stub-divider"></div>
-
-    <!-- Total Spends & Budget Tracker -->
-    <div class="total-block">
-      <div class="total-label">Total Spend This Month</div>
-      <div class="total-amount" id="totalAmount">S$0.00</div>
-
-      <div class="budget-container" id="budgetBox" style="display:none">
-        <div class="budget-header">
-          <span>BUDGET: <b id="budgetLimitText">S$0</b></span>
-          <span id="budgetPercentText">0%</span>
+    <!-- =========================================================================
+         TAB 2: GRAPHS & ANALYTICS
+         ========================================================================= -->
+    <div class="tab-pane" id="chartsTab">
+      <div class="analytics-section">
+        <!-- Daily Spend Bar Chart -->
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>📈 Daily Spending Trend</span>
+            <span id="chartPeakDay" style="font-size:10px; font-weight:normal;"></span>
+          </div>
+          <div class="chart-svg-wrap">
+            <svg class="daily-bars-svg" id="dailyBarSvg" viewBox="0 0 380 140"></svg>
+          </div>
         </div>
-        <div class="budget-bar-track">
-          <div class="budget-bar-fill" id="budgetBarFill" style="width: 0%"></div>
+
+        <!-- Category Doughnut Distribution -->
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>🍩 Category Distribution</span>
+          </div>
+          <div class="donut-container">
+            <svg class="donut-svg" id="donutSvg" viewBox="0 0 100 100"></svg>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
         </div>
-        <div class="budget-stats">
-          <span id="budgetRemainingText">Remaining: S$0.00</span>
-          <span id="budgetPaceText">Daily Pace: S$0.00</span>
+
+        <!-- Month over Month Comparison -->
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>🗓️ 3-Month Trend Comparison</span>
+          </div>
+          <div id="momBarsContainer"></div>
         </div>
       </div>
     </div>
 
-    <!-- Category Bar Chart -->
-    <div class="cats" id="catsBox"></div>
-
-    <div class="stub-divider"></div>
-
-    <!-- Filter & Search Bar -->
-    <div class="filter-bar">
-      <div class="search-input-wrap">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search merchant, note...">
-        <button class="search-clear" id="searchClear">&times;</button>
+    <!-- =========================================================================
+         TAB 3: CALENDAR HEATMAP
+         ========================================================================= -->
+    <div class="tab-pane" id="calTab">
+      <div class="calendar-section">
+        <div class="cal-grid-header">
+          <div>SUN</div><div>MON</div><div>TUE</div><div>WED</div><div>THU</div><div>FRI</div><div>SAT</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
       </div>
-      <select class="cat-filter-select" id="catFilter">
-        <option value="">All Categories</option>
-      </select>
     </div>
 
-    <!-- Expense Line Items -->
-    <div class="items" id="itemsBox"></div>
+    <!-- =========================================================================
+         TAB 4: INSIGHTS & METRICS
+         ========================================================================= -->
+    <div class="tab-pane" id="insightsTab">
+      <div class="insights-section">
+        <div class="kpi-grid">
+          <div class="kpi-box">
+            <div class="kpi-title">Avg Daily Spend</div>
+            <div class="kpi-val" id="kpiAvgDaily">S$0.00</div>
+            <div class="kpi-sub" id="kpiDaysActive">Across 0 days</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Avg Per Transaction</div>
+            <div class="kpi-val" id="kpiAvgTrans">S$0.00</div>
+            <div class="kpi-sub" id="kpiTxnCount">0 total transactions</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Weekday vs Weekend</div>
+            <div class="kpi-val" id="kpiWkRatio">50 / 50%</div>
+            <div class="kpi-sub">Spending breakdown</div>
+          </div>
+          <div class="kpi-box">
+            <div class="kpi-title">Projected Month End</div>
+            <div class="kpi-val" id="kpiProjected">S$0.00</div>
+            <div class="kpi-sub">At current daily burn rate</div>
+          </div>
+        </div>
 
-    <!-- Barcode & Receipt Stamp Footer -->
+        <div class="chart-card">
+          <div class="chart-title">
+            <span>🏆 Top 5 Merchants</span>
+          </div>
+          <div class="top-merchants-list" id="topMerchantsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barcode Footer -->
     <div class="receipt-footer">
       <div class="barcode" id="barcodeGen"></div>
       <div class="footer-caption">*** SYNCED TO YOUR GOOGLE SHEET ***</div>
@@ -891,7 +1192,7 @@
   </div>
 </div>
 
-<!-- QUICK VOICE / TEXT MODAL -->
+<!-- QUICK VOICE / NATURAL TEXT MODAL -->
 <div class="modal-bg" id="voiceModalBg">
   <div class="modal">
     <div class="modal-head">
@@ -951,7 +1252,7 @@
       <button id="closeSettings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
     </div>
 
-    <div class="help">Connects this app directly to your private Google Sheet backend via Google Apps Script.</div>
+    <div class="help">Connects directly to your private Google Sheet backend via Google Apps Script.</div>
     <div class="field">
       <label>APPS SCRIPT WEB APP URL</label>
       <input id="scriptUrlInput" placeholder="https://script.google.com/macros/s/.../exec">
@@ -974,7 +1275,7 @@
       <input id="monthlyBudgetInput" type="number" step="50" placeholder="e.g. 1500">
     </div>
 
-    <div class="help"><b>AI Receipt Scanner:</b> Choose your AI provider to enable 1-tap receipt optical scanning.</div>
+    <div class="help"><b>AI Receipt Scanner:</b> Choose your AI provider to enable optical receipt scanning.</div>
     <div class="field">
       <label>AI PROVIDER</label>
       <select id="aiProviderSelect">
@@ -989,10 +1290,14 @@
     </div>
 
     <div class="field">
-      <label>SOUND EFFECTS</label>
+      <label>SCANNER BEHAVIOR</label>
+      <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; margin-bottom: 8px;">
+        <input type="checkbox" id="autoAddToggle" style="width: auto;">
+        <span><b>Auto-Save Scanned Receipts</b> (Automatically adds to ledger without prompt)</span>
+      </label>
       <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer;">
         <input type="checkbox" id="soundToggle" style="width: auto;">
-        <span>Enable vintage mechanical typewriter sound</span>
+        <span>Enable vintage typewriter sound</span>
       </label>
     </div>
 
@@ -1007,19 +1312,19 @@
 
 <script>
 /**
- * SINGAPORE LEDGER - CORE FRONTEND LOGIC
+ * SINGAPORE LEDGER - CORE FRONTEND LOGIC & MULTI-TAB ENGINE
  */
 const CATEGORIES = [
-  { id: 'bus', label: 'Bus / MRT', icon: '🚌' },
-  { id: 'cab', label: 'Cab / Rideshare', icon: '🚕' },
-  { id: 'food', label: 'Food & Drinks', icon: '🍜' },
-  { id: 'groceries', label: 'Groceries', icon: '🛒' },
-  { id: 'medical', label: 'Medical & Health', icon: '💊' },
-  { id: 'household', label: 'Household & Bills', icon: '🏠' },
-  { id: 'phone', label: 'Phone & Telco', icon: '📱' },
-  { id: 'shopping', label: 'Shopping', icon: '🛍️' },
-  { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-  { id: 'misc', label: 'Miscellaneous', icon: '📦' }
+  { id: 'bus', label: 'Bus / MRT', icon: '🚌', color: '#B23A2E' },
+  { id: 'cab', label: 'Cab / Rideshare', icon: '🚕', color: '#D97706' },
+  { id: 'food', label: 'Food & Drinks', icon: '🍜', color: '#2F6E3B' },
+  { id: 'groceries', label: 'Groceries', icon: '🛒', color: '#235789' },
+  { id: 'medical', label: 'Medical & Health', icon: '💊', color: '#8B5CF6' },
+  { id: 'household', label: 'Household & Bills', icon: '🏠', color: '#059669' },
+  { id: 'phone', label: 'Phone & Telco', icon: '📱', color: '#0284C7' },
+  { id: 'shopping', label: 'Shopping', icon: '🛍️', color: '#EC4899' },
+  { id: 'entertainment', label: 'Entertainment', icon: '🎬', color: '#F59E0B' },
+  { id: 'misc', label: 'Miscellaneous', icon: '📦', color: '#6B7280' }
 ];
 
 const THEMES = ['classic', 'dark', 'minimal'];
@@ -1029,13 +1334,13 @@ const LS = {
   aiProvider: 'sg_ledger_ai_provider',
   apiKey: 'sg_ledger_api_key',
   budget: 'sg_ledger_monthly_budget',
+  autoAdd: 'sg_ledger_auto_add',
   theme: 'sg_ledger_theme',
   sound: 'sg_ledger_sound',
   expenses: 'sg_ledger_expenses_cache',
   syncQueue: 'sg_ledger_offline_queue'
 };
 
-// Default preconfigured URL from user
 const DEFAULT_URL = 'https://script.google.com/macros/s/AKfycbzuGF0Y4dF2PqJ50Oe9ePHgdN70s5NePi0Xlo_NZNgZOqwZk8dOGwIXSwBx9g1DxPPnWg/exec';
 
 let expenses = [];
@@ -1045,14 +1350,16 @@ let currentEditingId = null;
 let currentDraft = null;
 let searchQuery = '';
 let selectedCategoryFilter = '';
+let activeTab = 'tapeTab';
 
 function cfg() {
   return {
     url: localStorage.getItem(LS.url) || DEFAULT_URL,
-    token: localStorage.getItem(LS.token) || '',
+    token: localStorage.getItem(LS.token) || 'CHANGE_ME',
     aiProvider: localStorage.getItem(LS.aiProvider) || 'gemini',
     apiKey: localStorage.getItem(LS.apiKey) || '',
     budget: Number(localStorage.getItem(LS.budget)) || 0,
+    autoAdd: localStorage.getItem(LS.autoAdd) === 'true',
     sound: localStorage.getItem(LS.sound) !== 'false'
   };
 }
@@ -1084,13 +1391,17 @@ function catIcon(id) {
   const c = CATEGORIES.find(c => c.id === id);
   return c ? c.icon : '📦';
 }
+function catColor(id) {
+  const c = CATEGORIES.find(c => c.id === id);
+  return c ? c.color : '#6B7280';
+}
 function escapeHtml(s) {
   const d = document.createElement('div');
   d.textContent = String(s || '');
   return d.innerHTML;
 }
 
-// Vintage Mechanical Audio Click
+// Audio Feedback
 function playClickSound() {
   if (!cfg().sound) return;
   try {
@@ -1132,7 +1443,7 @@ function showError(msg) {
     </div>` : '';
 }
 
-// Local Cache Persistence
+// Local Storage
 function loadLocalCache() {
   try {
     const raw = localStorage.getItem(LS.expenses);
@@ -1150,17 +1461,16 @@ function saveLocalCache() {
   } catch (e) {}
 }
 
-// Network & Google Apps Script Sync
+// Network Sync
 async function syncWithSheet() {
   const { url, token } = cfg();
   if (!url || !token) {
-    setSync('Tap gear ⚙ to enter your token', true);
+    setSync('Tap gear ⚙ to configure sync', true);
     return;
   }
 
   setSync('syncing…', false, true);
 
-  // 1. Process any pending offline queue items first
   if (offlineQueue.length > 0) {
     try {
       const itemsToSync = [...offlineQueue];
@@ -1168,11 +1478,10 @@ async function syncWithSheet() {
       offlineQueue = [];
       saveLocalCache();
     } catch (e) {
-      console.warn('Batch sync offline queue failed, will retry next time', e);
+      console.warn('Offline batch sync failed, retrying next time', e);
     }
   }
 
-  // 2. Fetch fresh data from sheet
   try {
     const res = await fetch(url + '?token=' + encodeURIComponent(token));
     const data = await res.json();
@@ -1189,10 +1498,10 @@ async function syncWithSheet() {
 
     saveLocalCache();
     setSync('synced ✓', false);
-    render();
+    renderCurrentTab();
   } catch (err) {
     console.error(err);
-    setSync('offline / sync failed', true);
+    setSync('offline / check settings', true);
   }
 }
 
@@ -1208,17 +1517,34 @@ async function apiPost(body) {
   return data;
 }
 
-// Render Main Dashboard & Ledger
-function render() {
-  document.getElementById('monthLabel').textContent = formatMonth(viewDate).toUpperCase();
-  const mk = monthKey(viewDate);
+// Tab Switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = btn.dataset.tab;
+    document.getElementById(activeTab).classList.add('active');
+    renderCurrentTab();
+  });
+});
 
-  // Filter current month
+function renderCurrentTab() {
+  document.getElementById('monthLabel').textContent = formatMonth(viewDate).toUpperCase();
+  if (activeTab === 'tapeTab') renderTape();
+  else if (activeTab === 'chartsTab') renderCharts();
+  else if (activeTab === 'calTab') renderCalendar();
+  else if (activeTab === 'insightsTab') renderInsights();
+  generateBarcode();
+}
+
+// 1. RENDER TAPE
+function renderTape() {
+  const mk = monthKey(viewDate);
   let monthExpenses = expenses.filter(x => x.date && String(x.date).startsWith(mk));
   const monthTotal = monthExpenses.reduce((s, x) => s + x.amount, 0);
   document.getElementById('totalAmount').textContent = 'S$' + money(monthTotal);
 
-  // Budget Tracker
   const budget = cfg().budget;
   const budgetBox = document.getElementById('budgetBox');
   if (budget > 0) {
@@ -1245,7 +1571,6 @@ function render() {
     budgetBox.style.display = 'none';
   }
 
-  // Category Breakdown
   const catMap = {};
   monthExpenses.forEach(x => catMap[x.category] = (catMap[x.category] || 0) + x.amount);
   const byCat = CATEGORIES.map(c => ({ ...c, total: catMap[c.id] || 0 })).filter(c => c.total > 0).sort((a, b) => b.total - a.total);
@@ -1258,20 +1583,16 @@ function render() {
         <span class="val">S$${money(c.total)}</span>
       </div>
       <div class="bar-track">
-        <div class="bar-fill" style="width: ${(c.total / maxCat) * 100}%"></div>
+        <div class="bar-fill" style="width: ${(c.total / maxCat) * 100}%; background: ${c.color}"></div>
       </div>
     </div>
   `).join('');
 
-  // Update Category Filter dropdown
   const catFilter = document.getElementById('catFilter');
   catFilter.innerHTML = '<option value="">All Categories</option>' + CATEGORIES.map(c => `<option value="${c.id}" ${selectedCategoryFilter === c.id ? 'selected' : ''}>${c.icon} ${c.label}</option>`).join('');
 
-  // Apply Search & Filter
   let filtered = monthExpenses;
-  if (selectedCategoryFilter) {
-    filtered = filtered.filter(x => x.category === selectedCategoryFilter);
-  }
+  if (selectedCategoryFilter) filtered = filtered.filter(x => x.category === selectedCategoryFilter);
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     filtered = filtered.filter(x => (x.merchant && x.merchant.toLowerCase().includes(q)) || (x.note && x.note.toLowerCase().includes(q)));
@@ -1307,19 +1628,269 @@ function render() {
       </div>
     `).join('');
 
-    // Row click opens edit modal
     itemsBox.querySelectorAll('.item').forEach(el => {
       el.addEventListener('click', () => openEditModal(el.dataset.id));
     });
   }
+}
 
-  generateBarcode();
+// 2. RENDER CHARTS
+function renderCharts() {
+  const mk = monthKey(viewDate);
+  const monthExpenses = expenses.filter(x => x.date && String(x.date).startsWith(mk));
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+
+  // Daily map
+  const dayMap = {};
+  for (let d = 1; d <= daysInMonth; d++) dayMap[d] = 0;
+  monthExpenses.forEach(x => {
+    const day = parseInt(String(x.date).slice(8, 10), 10);
+    if (day >= 1 && day <= daysInMonth) dayMap[day] += x.amount;
+  });
+
+  const maxDaily = Math.max(...Object.values(dayMap), 10);
+  let peakDay = 1;
+  let peakAmt = 0;
+  for (let d = 1; d <= daysInMonth; d++) {
+    if (dayMap[d] > peakAmt) {
+      peakAmt = dayMap[d];
+      peakDay = d;
+    }
+  }
+  document.getElementById('chartPeakDay').textContent = peakAmt > 0 ? `Peak: Day ${peakDay} (S$${money(peakAmt)})` : '';
+
+  // Render SVG Daily Bar Chart
+  const svg = document.getElementById('dailyBarSvg');
+  const svgWidth = 380;
+  const svgHeight = 140;
+  const chartHeight = 100;
+  const barWidth = (svgWidth - 20) / daysInMonth;
+  let svgHtml = '';
+
+  // Grid lines
+  svgHtml += `<line x1="10" y1="10" x2="${svgWidth - 10}" y2="10" stroke="var(--line)" stroke-dasharray="3,3"/>`;
+  svgHtml += `<line x1="10" y1="${chartHeight + 10}" x2="${svgWidth - 10}" y2="${chartHeight + 10}" stroke="var(--line)"/>`;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const amt = dayMap[d];
+    const barH = (amt / maxDaily) * chartHeight;
+    const x = 10 + (d - 1) * barWidth + barWidth * 0.15;
+    const y = 10 + (chartHeight - barH);
+    const w = barWidth * 0.7;
+
+    svgHtml += `
+      <rect class="chart-bar-rect" x="${x}" y="${y}" width="${w}" height="${Math.max(barH, 1)}" fill="${amt > 0 ? 'var(--stamp-red)' : 'var(--line-light)'}">
+        <title>Day ${d}: S$${money(amt)}</title>
+      </rect>
+    `;
+
+    if (d === 1 || d === 5 || d === 10 || d === 15 || d === 20 || d === 25 || d === daysInMonth) {
+      svgHtml += `<text class="chart-axis-text" x="${x + w / 2}" y="${chartHeight + 25}">${d}</text>`;
+    }
+  }
+  svg.innerHTML = svgHtml;
+
+  // Donut Category Breakdown
+  const catMap = {};
+  monthExpenses.forEach(x => catMap[x.category] = (catMap[x.category] || 0) + x.amount);
+  const total = monthExpenses.reduce((s, x) => s + x.amount, 0);
+  const byCat = CATEGORIES.map(c => ({ ...c, total: catMap[c.id] || 0 })).filter(c => c.total > 0).sort((a, b) => b.total - a.total);
+
+  const donutSvg = document.getElementById('donutSvg');
+  const donutLegend = document.getElementById('donutLegend');
+
+  if (total === 0) {
+    donutSvg.innerHTML = `<circle cx="50" cy="50" r="35" fill="none" stroke="var(--line)" stroke-width="14"/>`;
+    donutLegend.innerHTML = '<div style="color:var(--ink-soft); font-size:11px;">No spends logged this month.</div>';
+  } else {
+    const radius = 35;
+    const circumference = 2 * Math.PI * radius;
+    let accumulatedOffset = 0;
+    let donutPaths = '';
+    let legendHtml = '';
+
+    byCat.forEach((c) => {
+      const fraction = c.total / total;
+      const strokeDash = fraction * circumference;
+      donutPaths += `
+        <circle cx="50" cy="50" r="${radius}" fill="none" stroke="${c.color}" stroke-width="14"
+          stroke-dasharray="${strokeDash} ${circumference}"
+          stroke-dashoffset="${-accumulatedOffset}"
+          transform="rotate(-90 50 50)">
+          <title>${c.label}: S$${money(c.total)} (${Math.round(fraction * 100)}%)</title>
+        </circle>
+      `;
+      accumulatedOffset += strokeDash;
+
+      legendHtml += `
+        <div class="legend-item">
+          <span><span class="legend-color-dot" style="background:${c.color}"></span>${c.icon} ${c.label}</span>
+          <b>S$${money(c.total)} (${Math.round(fraction * 100)}%)</b>
+        </div>
+      `;
+    });
+
+    donutSvg.innerHTML = donutPaths;
+    donutLegend.innerHTML = legendHtml;
+  }
+
+  // Month-over-Month (Current & Previous 2 months)
+  const momContainer = document.getElementById('momBarsContainer');
+  let momMonths = [];
+  for (let offset = -2; offset <= 0; offset++) {
+    const d = new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1);
+    const key = monthKey(d);
+    const label = d.toLocaleDateString('en-SG', { month: 'short', year: '2-digit' }).toUpperCase();
+    const sum = expenses.filter(x => x.date && String(x.date).startsWith(key)).reduce((s, x) => s + x.amount, 0);
+    momMonths.push({ key, label, sum, isCurrent: offset === 0 });
+  }
+
+  const maxMom = Math.max(...momMonths.map(m => m.sum), 10);
+  momContainer.innerHTML = momMonths.map(m => `
+    <div class="mom-row">
+      <div class="mom-label" style="${m.isCurrent ? 'font-weight:700; color:var(--ink);' : ''}">${m.label}</div>
+      <div class="mom-bar-wrap">
+        <div class="mom-bar-fill" style="width:${(m.sum / maxMom) * 100}%; background:${m.isCurrent ? 'var(--stamp-red)' : 'var(--line)'};"></div>
+      </div>
+      <div class="mom-val">S$${money(m.sum)}</div>
+    </div>
+  `).join('');
+}
+
+// 3. RENDER CALENDAR HEAT MAP
+function renderCalendar() {
+  const mk = monthKey(viewDate);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayIndex = new Date(year, month, 1).getDay();
+
+  const monthExpenses = expenses.filter(x => x.date && String(x.date).startsWith(mk));
+  const dayMap = {};
+  monthExpenses.forEach(x => {
+    const d = parseInt(String(x.date).slice(8, 10), 10);
+    dayMap[d] = (dayMap[d] || 0) + x.amount;
+  });
+
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+  const calGrid = document.getElementById('calGrid');
+  let html = '';
+
+  // Leading empty cells
+  for (let i = 0; i < firstDayIndex; i++) {
+    html += '<div class="cal-cell empty"></div>';
+  }
+
+  // Day cells
+  for (let d = 1; d <= daysInMonth; d++) {
+    const spend = dayMap[d] || 0;
+    const isToday = isCurrentMonth && today.getDate() === d;
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+    html += `
+      <div class="cal-cell ${spend > 0 ? 'has-spend' : ''} ${isToday ? 'today' : ''}" onclick="filterToDate('${dateStr}')">
+        <div class="cal-date-num">${d}</div>
+        ${spend > 0 ? `<div class="cal-spend-val">S$${money(spend)}</div>` : ''}
+      </div>
+    `;
+  }
+
+  calGrid.innerHTML = html;
+}
+
+function filterToDate(dateStr) {
+  // Switch to tape tab and filter by date
+  activeTab = 'tapeTab';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="tapeTab"]').classList.add('active');
+  document.getElementById('tapeTab').classList.add('active');
+
+  searchQuery = dateStr;
+  searchInput.value = dateStr;
+  searchClear.style.display = 'block';
+  renderTape();
+  showToast('Filtered to ' + formatDate(dateStr));
+}
+
+// 4. RENDER INSIGHTS
+function renderInsights() {
+  const mk = monthKey(viewDate);
+  const monthExpenses = expenses.filter(x => x.date && String(x.date).startsWith(mk));
+  const monthTotal = monthExpenses.reduce((s, x) => s + x.amount, 0);
+  const count = monthExpenses.length;
+
+  const daysInMonth = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate();
+  const now = new Date();
+  const isCurrentMonth = viewDate.getFullYear() === now.getFullYear() && viewDate.getMonth() === now.getMonth();
+  const daysPassed = isCurrentMonth ? now.getDate() : daysInMonth;
+
+  // Active spending days
+  const activeDaysSet = new Set(monthExpenses.map(x => x.date));
+  const activeDaysCount = activeDaysSet.size;
+
+  const avgDaily = daysPassed > 0 ? (monthTotal / daysPassed) : 0;
+  const avgTrans = count > 0 ? (monthTotal / count) : 0;
+
+  // Weekday vs Weekend
+  let weekdaySum = 0;
+  let weekendSum = 0;
+  monthExpenses.forEach(x => {
+    const parts = String(x.date).split('-');
+    if (parts.length === 3) {
+      const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      const day = d.getDay();
+      if (day === 0 || day === 6) weekendSum += x.amount;
+      else weekdaySum += x.amount;
+    }
+  });
+
+  const wkTotal = weekdaySum + weekendSum;
+  const wkPct = wkTotal > 0 ? Math.round((weekdaySum / wkTotal) * 100) : 50;
+  const wePct = 100 - wkPct;
+
+  const projected = avgDaily * daysInMonth;
+
+  document.getElementById('kpiAvgDaily').textContent = 'S$' + money(avgDaily);
+  document.getElementById('kpiDaysActive').textContent = `${activeDaysCount} active spending days`;
+
+  document.getElementById('kpiAvgTrans').textContent = 'S$' + money(avgTrans);
+  document.getElementById('kpiTxnCount').textContent = `${count} transactions logged`;
+
+  document.getElementById('kpiWkRatio').textContent = `${wkPct}% / ${wePct}%`;
+  document.getElementById('kpiProjected').textContent = 'S$' + money(projected);
+
+  // Top 5 Merchants Leaderboard
+  const merchantMap = {};
+  monthExpenses.forEach(x => {
+    const name = x.merchant || 'Unknown';
+    merchantMap[name] = (merchantMap[name] || 0) + x.amount;
+  });
+
+  const sortedMerchants = Object.entries(merchantMap).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const listEl = document.getElementById('topMerchantsList');
+
+  if (sortedMerchants.length === 0) {
+    listEl.innerHTML = '<div style="color:var(--ink-soft); font-size:12px;">No spends logged this month.</div>';
+  } else {
+    listEl.innerHTML = sortedMerchants.map(([name, sum], idx) => `
+      <div class="top-merchant-row">
+        <div>
+          <span class="merchant-rank">${idx + 1}</span>
+          <b>${escapeHtml(name)}</b>
+        </div>
+        <div>S$${money(sum)}</div>
+      </div>
+    `).join('');
+  }
 }
 
 function filterByCategory(catId) {
   selectedCategoryFilter = (selectedCategoryFilter === catId) ? '' : catId;
   document.getElementById('catFilter').value = selectedCategoryFilter;
-  render();
+  renderTape();
 }
 
 function generateBarcode() {
@@ -1334,39 +1905,36 @@ function generateBarcode() {
   container.innerHTML = html;
 }
 
-// Navigation
+// Navigation Listeners
 document.getElementById('prevMonth').addEventListener('click', () => {
   viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
-  render();
+  renderCurrentTab();
 });
 document.getElementById('nextMonth').addEventListener('click', () => {
   viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
-  render();
+  renderCurrentTab();
 });
-document.getElementById('syncStatusWrap').addEventListener('click', () => {
-  syncWithSheet();
-});
+document.getElementById('syncStatusWrap').addEventListener('click', () => syncWithSheet());
 
-// Search & Filter Listeners
 const searchInput = document.getElementById('searchInput');
 const searchClear = document.getElementById('searchClear');
 searchInput.addEventListener('input', (e) => {
   searchQuery = e.target.value.trim();
   searchClear.style.display = searchQuery ? 'block' : 'none';
-  render();
+  renderTape();
 });
 searchClear.addEventListener('click', () => {
   searchInput.value = '';
   searchQuery = '';
   searchClear.style.display = 'none';
-  render();
+  renderTape();
 });
 document.getElementById('catFilter').addEventListener('change', (e) => {
   selectedCategoryFilter = e.target.value;
-  render();
+  renderTape();
 });
 
-// Modals Handling
+// Entry / Edit Modal Handling
 function openEntryModal(data = {}) {
   currentEditingId = data.id || null;
   currentDraft = {
@@ -1434,7 +2002,33 @@ document.getElementById('entryModalBg').addEventListener('click', (e) => {
   if (e.target.id === 'entryModalBg') e.currentTarget.classList.remove('open');
 });
 
-// Save Entry (Create / Update with Optimistic UI)
+// Helper: Programmatically save an expense directly (Used by manual save and AI Auto-Save)
+async function recordExpense(entry, isUpdate = false) {
+  if (isUpdate) {
+    const idx = expenses.findIndex(x => x.id === entry.id);
+    if (idx !== -1) expenses[idx] = entry;
+    showToast('Entry updated');
+  } else {
+    expenses.unshift(entry);
+    showToast(`✓ Added S$${money(entry.amount)} at ${entry.merchant}`);
+  }
+
+  playClickSound();
+  saveLocalCache();
+  renderCurrentTab();
+
+  try {
+    await apiPost({ action: isUpdate ? 'update' : 'add', ...entry });
+    setSync('synced ✓', false);
+  } catch (err) {
+    console.warn('Sync failed, queued offline', err);
+    offlineQueue.push(entry);
+    saveLocalCache();
+    setSync('saved offline', true);
+  }
+}
+
+// Save Entry from Modal
 document.getElementById('saveEntry').addEventListener('click', async () => {
   const amount = Number(document.getElementById('fAmount').value);
   const merchant = document.getElementById('fMerchant').value.trim() || 'Unknown';
@@ -1449,45 +2043,19 @@ document.getElementById('saveEntry').addEventListener('click', async () => {
 
   const isUpdate = Boolean(currentEditingId);
   const entryId = isUpdate ? currentEditingId : (Date.now() + '-' + Math.random().toString(36).slice(2, 7));
-
   const entry = { id: entryId, merchant, amount, category, date, note };
 
-  // Optimistic UI update
-  if (isUpdate) {
-    const idx = expenses.findIndex(x => x.id === entryId);
-    if (idx !== -1) expenses[idx] = entry;
-    showToast('Entry updated');
-  } else {
-    expenses.unshift(entry);
-    showToast('Added S$' + money(amount) + ' to ledger');
-  }
-
-  playClickSound();
-  saveLocalCache();
   document.getElementById('entryModalBg').classList.remove('open');
-  render();
-
-  // Background Google Sheets Sync
-  try {
-    await apiPost({ action: isUpdate ? 'update' : 'add', ...entry });
-    setSync('synced ✓', false);
-  } catch (err) {
-    console.warn('Sync failed, queuing offline update', err);
-    offlineQueue.push(entry);
-    saveLocalCache();
-    setSync('saved offline', true);
-  }
+  await recordExpense(entry, isUpdate);
 });
 
 // Delete Expense
 async function deleteExpense(id) {
   if (!confirm('Remove this expense from ledger?')) return;
-
-  const prevExpenses = [...expenses];
   expenses = expenses.filter(x => x.id !== id);
   saveLocalCache();
   playClickSound();
-  render();
+  renderCurrentTab();
   showToast('Entry deleted');
 
   if (document.getElementById('entryModalBg').classList.contains('open')) {
@@ -1506,13 +2074,14 @@ document.getElementById('deleteEntryModal').addEventListener('click', () => {
   if (currentEditingId) deleteExpense(currentEditingId);
 });
 
-// Settings Modal & Health Check
+// Settings Modal & Verification
 document.getElementById('gearBtn').addEventListener('click', () => {
   document.getElementById('scriptUrlInput').value = localStorage.getItem(LS.url) || DEFAULT_URL;
-  document.getElementById('tokenInput').value = localStorage.getItem(LS.token) || '';
+  document.getElementById('tokenInput').value = localStorage.getItem(LS.token) || 'CHANGE_ME';
   document.getElementById('aiProviderSelect').value = localStorage.getItem(LS.aiProvider) || 'gemini';
   document.getElementById('apiKeyInput').value = localStorage.getItem(LS.apiKey) || '';
   document.getElementById('monthlyBudgetInput').value = localStorage.getItem(LS.budget) || '';
+  document.getElementById('autoAddToggle').checked = localStorage.getItem(LS.autoAdd) === 'true';
   document.getElementById('soundToggle').checked = localStorage.getItem(LS.sound) !== 'false';
   document.getElementById('testConnResult').textContent = '';
   document.getElementById('settingsModalBg').classList.add('open');
@@ -1530,6 +2099,7 @@ document.getElementById('saveSettings').addEventListener('click', () => {
   const aiProvider = document.getElementById('aiProviderSelect').value;
   const key = document.getElementById('apiKeyInput').value.trim();
   const budget = document.getElementById('monthlyBudgetInput').value.trim();
+  const autoAdd = document.getElementById('autoAddToggle').checked;
   const sound = document.getElementById('soundToggle').checked;
 
   if (url) localStorage.setItem(LS.url, url); else localStorage.removeItem(LS.url);
@@ -1537,6 +2107,7 @@ document.getElementById('saveSettings').addEventListener('click', () => {
   localStorage.setItem(LS.aiProvider, aiProvider);
   if (key) localStorage.setItem(LS.apiKey, key); else localStorage.removeItem(LS.apiKey);
   if (budget) localStorage.setItem(LS.budget, budget); else localStorage.removeItem(LS.budget);
+  localStorage.setItem(LS.autoAdd, String(autoAdd));
   localStorage.setItem(LS.sound, String(sound));
 
   document.getElementById('settingsModalBg').classList.remove('open');
@@ -1544,7 +2115,6 @@ document.getElementById('saveSettings').addEventListener('click', () => {
   syncWithSheet();
 });
 
-// Test Connection Ping
 document.getElementById('testConnBtn').addEventListener('click', async () => {
   const url = document.getElementById('scriptUrlInput').value.trim();
   const token = document.getElementById('tokenInput').value.trim();
@@ -1592,7 +2162,7 @@ document.getElementById('themeBtn').addEventListener('click', () => {
   showToast('Theme: ' + next.toUpperCase());
 });
 
-// Export & Backup Modal
+// Export & Backup
 document.getElementById('exportBtn').addEventListener('click', () => {
   document.getElementById('exportModalBg').classList.add('open');
 });
@@ -1632,18 +2202,15 @@ document.getElementById('exportCsvMonthBtn').addEventListener('click', () => {
   document.getElementById('exportModalBg').classList.remove('open');
   showToast('CSV downloaded');
 });
-
 document.getElementById('exportCsvAllBtn').addEventListener('click', () => {
   exportToCsv(expenses, `SG_Ledger_All_${new Date().toISOString().slice(0, 10)}.csv`);
   document.getElementById('exportModalBg').classList.remove('open');
   showToast('Full CSV backup downloaded');
 });
-
 document.getElementById('printReceiptBtn').addEventListener('click', () => {
   document.getElementById('exportModalBg').classList.remove('open');
   setTimeout(() => window.print(), 300);
 });
-
 document.getElementById('clearCacheBtn').addEventListener('click', () => {
   if (confirm('Clear local offline cache and re-sync from Google Sheets?')) {
     localStorage.removeItem(LS.expenses);
@@ -1670,15 +2237,10 @@ document.getElementById('voiceModalBg').addEventListener('click', (e) => {
 function parseQuickText(text) {
   if (!text) return null;
   const t = text.trim();
-  
-  // Extract number (e.g. 5.50 or $12.30)
   const amtMatch = t.match(/\$?\s*([0-9]+(?:\.[0-9]{1,2})?)/);
   const amount = amtMatch ? parseFloat(amtMatch[1]) : '';
-  
-  // Remove amount from text to get merchant & words
   let clean = t.replace(/\$?\s*([0-9]+(?:\.[0-9]{1,2})?)/, '').trim();
-  
-  // Category inference
+
   const lower = t.toLowerCase();
   let category = 'food';
   if (lower.includes('bus') || lower.includes('mrt') || lower.includes('ezlink') || lower.includes('simplygo') || lower.includes('transit')) category = 'bus';
@@ -1707,7 +2269,6 @@ document.getElementById('parseQuickBtn').addEventListener('click', () => {
   }
 });
 
-// Speech Recognition if supported
 const micBtn = document.getElementById('micBtn');
 const voiceStatus = document.getElementById('voiceStatus');
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1729,20 +2290,16 @@ if (SpeechRec) {
     voiceStatus.textContent = 'Heard: "' + transcript + '"';
     micBtn.style.color = '';
   };
-
   recognizer.onerror = (e) => {
-    voiceStatus.textContent = 'Could not recognize speech: ' + e.error;
+    voiceStatus.textContent = 'Speech error: ' + e.error;
     micBtn.style.color = '';
   };
-
-  recognizer.onend = () => {
-    micBtn.style.color = '';
-  };
+  recognizer.onend = () => { micBtn.style.color = ''; };
 } else {
   micBtn.style.display = 'none';
 }
 
-// Client-Side Image Compression (Max 1200px / JPEG 0.8)
+// Client-Side Image Compression
 function compressImage(file, maxDimension = 1200, quality = 0.8) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1799,7 +2356,7 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
   e.target.value = '';
   if (!file) return;
 
-  const { apiKey, aiProvider } = cfg();
+  const { apiKey, aiProvider, autoAdd } = cfg();
   showError(null);
 
   const scanIcon = document.getElementById('scanIcon');
@@ -1809,14 +2366,12 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
   document.getElementById('scanBtn').disabled = true;
 
   try {
-    // Compress image to save bandwidth and prevent API timeouts
     const { base64, mediaType } = await compressImage(file);
     const today = new Date().toISOString().slice(0, 10);
     const prompt = `This is a photo of an expense receipt or transit bill from Singapore (SGD). Extract the merchant name, the final total amount in SGD (number only, including GST if applicable), category, and transaction date. Category MUST be exactly one of these IDs: ${CATEGORIES.map(c => c.id).join(', ')}. Use "bus" for bus/MRT/transit, "cab" for taxi/Grab/rideshare, "food" for hawker/restaurants, "groceries" for supermarkets (NTUC, Sheng Siong, Cold Storage, Giant, Don Don Donki), "phone" for telco. If the date is not found, use ${today}. Respond with ONLY raw JSON, without markdown code fences or any extra text, matching this exact schema: {"merchant": "string", "amount": 0.00, "category": "one_of_the_ids", "date": "YYYY-MM-DD", "note": "brief note or item names"}`;
 
     let parsed = null;
 
-    // Provider 1: Google Gemini (Recommended)
     if (aiProvider === 'gemini') {
       const models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
       let lastErr = null;
@@ -1839,15 +2394,13 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
           const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
           const clean = text.replace(/```json|```/g, '').trim();
           parsed = JSON.parse(clean);
-          break; // Success!
-        } catch (e) {
-          lastErr = e;
+          break;
+        } catch (err) {
+          lastErr = err;
         }
       }
       if (!parsed && lastErr) throw lastErr;
-    }
-    // Provider 2: Anthropic Claude
-    else if (aiProvider === 'anthropic') {
+    } else if (aiProvider === 'anthropic') {
       const res = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
         headers: {
@@ -1873,9 +2426,7 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
       const text = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
       const clean = text.replace(/```json|```/g, '').trim();
       parsed = JSON.parse(clean);
-    }
-    // Provider 3: OpenAI
-    else if (aiProvider === 'openai') {
+    } else if (aiProvider === 'openai') {
       const res = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -1902,14 +2453,24 @@ document.getElementById('fileInput').addEventListener('change', async (e) => {
     }
 
     if (parsed) {
-      openEntryModal({
+      const extractedEntry = {
+        id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
         merchant: parsed.merchant || 'Unknown',
-        amount: Number(parsed.amount) || '',
+        amount: Number(parsed.amount) || 0,
         category: CATEGORIES.some(c => c.id === parsed.category) ? parsed.category : 'misc',
         date: parsed.date || today,
         note: parsed.note || ''
-      });
-      showToast('Receipt scanned successfully');
+      };
+
+      // AUTO-ADD TOGGLE BEHAVIOR:
+      if (autoAdd && extractedEntry.amount > 0) {
+        // Automatically save straight to ledger and database!
+        await recordExpense(extractedEntry, false);
+      } else {
+        // Open confirmation modal
+        openEntryModal(extractedEntry);
+        showToast('Receipt scanned — tap Add to confirm');
+      }
     }
   } catch (err) {
     console.error('Scan error:', err);
@@ -1926,10 +2487,9 @@ function init() {
   const savedTheme = localStorage.getItem(LS.theme) || 'classic';
   applyTheme(savedTheme);
   loadLocalCache();
-  render();
+  renderCurrentTab();
   syncWithSheet();
 
-  // Register PWA Service Worker if supported
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
