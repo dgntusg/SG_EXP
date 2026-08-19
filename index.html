@@ -14,6 +14,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+<script>
+  // Force purge old PWA and Service Worker caches
+  if ('caches' in window) {
+    caches.keys().then(keys => {
+      keys.forEach(k => {
+        if (k !== 'sg-ledger-v4') caches.delete(k);
+      });
+    });
+  }
+</script>
+
 <style>
   :root {
     --floor: #EAE3D2;
@@ -217,27 +228,47 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 20px 14px;
+    padding: 0 18px 14px;
+    gap: 8px;
   }
   .nav-arrow {
-    background: none;
-    border: none;
+    background: var(--paper-dim);
+    border: 1.5px solid var(--line);
     cursor: pointer;
-    color: var(--ink-soft);
-    font-size: 15px;
-    padding: 5px 10px;
-    border-radius: 3px;
-    font-family: var(--font-mono);
+    color: var(--ink);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     transition: all 0.15s ease;
+    flex-shrink: 0;
   }
-  .nav-arrow:hover { background: var(--paper-dim); color: var(--stamp-red); }
-  .month-label {
+  .nav-arrow:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .nav-arrow:active { transform: scale(0.92); }
+  .month-label-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: var(--paper-dim);
+    border: 1.5px solid var(--line);
+    border-radius: 20px;
+    padding: 7px 14px;
     font-family: var(--font-mono);
     font-weight: 700;
-    font-size: 14.5px;
-    letter-spacing: 1.5px;
+    font-size: 13px;
+    letter-spacing: 1px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 3px var(--shadow);
     text-transform: uppercase;
   }
+  .month-label-btn:hover { border-color: var(--stamp-red); background: var(--paper); }
+  .month-label-btn:active { transform: scale(0.98); }
 
   /* TAB CONTENT PANELS */
   .tab-pane { display: none; }
@@ -409,26 +440,38 @@
 
   /* FILTER BAR */
   .filter-bar {
-    padding: 10px 20px 4px;
+    padding: 12px 20px 6px;
     display: flex;
     gap: 8px;
+    align-items: center;
   }
   .search-input-wrap { flex: 1; position: relative; }
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-soft);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
   .search-input {
     width: 100%;
     font-family: var(--font-mono);
     font-size: 12px;
     background: var(--paper-dim);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 7px 28px 7px 9px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 28px 8px 30px;
     color: var(--ink);
     outline: none;
+    transition: all 0.15s ease;
   }
-  .search-input:focus { border-color: var(--stamp-red); }
+  .search-input:focus { border-color: var(--stamp-red); background: var(--paper); box-shadow: 0 0 0 2px rgba(178,58,46,0.1); }
   .search-clear {
     position: absolute;
-    right: 6px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -437,17 +480,88 @@
     cursor: pointer;
     padding: 2px;
     display: none;
+    font-size: 14px;
+  }
+  .cat-filter-wrap {
+    position: relative;
+    flex-shrink: 0;
   }
   .cat-filter-select {
+    appearance: none;
+    -webkit-appearance: none;
     font-family: var(--font-mono);
     font-size: 11.5px;
+    font-weight: 600;
     background: var(--paper-dim);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 6px 8px;
+    border: 1.5px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 28px 8px 10px;
     color: var(--ink);
     outline: none;
-    max-width: 130px;
+    cursor: pointer;
+    max-width: 145px;
+    transition: all 0.15s ease;
+  }
+  .cat-filter-select:focus { border-color: var(--stamp-red); background: var(--paper); box-shadow: 0 0 0 2px rgba(178,58,46,0.1); }
+  .cat-filter-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+  }
+
+  /* MONTH PICKER MODAL */
+  .month-picker-year-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .year-btn {
+    background: var(--paper-dim);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    transition: all 0.15s ease;
+  }
+  .year-btn:hover { background: var(--ink); color: var(--paper); }
+  .month-grid-picker {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .month-grid-btn {
+    background: var(--paper-dim);
+    border: 1.5px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+    letter-spacing: 0.5px;
+  }
+  .month-grid-btn:hover { border-color: var(--stamp-red); background: var(--paper); }
+  .month-grid-btn.active {
+    background: var(--stamp-red);
+    color: #FFF;
+    border-color: var(--stamp-red);
   }
 
   /* ITEMS LIST */
@@ -980,9 +1094,17 @@
   <div class="receipt-card">
     <!-- Month Navigation Header (Common to all tabs) -->
     <div class="month-nav">
-      <button class="nav-arrow" id="prevMonth">&#8592; PREV</button>
-      <div class="month-label" id="monthLabel">AUGUST 2026</div>
-      <button class="nav-arrow" id="nextMonth">NEXT &#8594;</button>
+      <button class="nav-arrow" id="prevMonth" title="Previous Month">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="month-label-btn" id="monthPickerBtn" title="Click to choose month & year">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <span id="monthLabel">AUGUST 2026</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      <button class="nav-arrow" id="nextMonth" title="Next Month">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </div>
 
     <!-- =========================================================================
@@ -1039,12 +1161,20 @@
       <!-- Filter & Search Bar -->
       <div class="filter-bar">
         <div class="search-input-wrap">
+          <span class="search-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </span>
           <input type="text" class="search-input" id="searchInput" placeholder="Search merchant, note...">
           <button class="search-clear" id="searchClear">&times;</button>
         </div>
-        <select class="cat-filter-select" id="catFilter">
-          <option value="">All Categories</option>
-        </select>
+        <div class="cat-filter-wrap">
+          <select class="cat-filter-select" id="catFilter">
+            <option value="">All Categories</option>
+          </select>
+          <span class="cat-filter-arrow">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </span>
+        </div>
       </div>
 
       <!-- Expense Line Items -->
@@ -1197,6 +1327,28 @@
         <span id="saveBtnText">ADD TO LEDGER</span>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- MONTH & YEAR QUICK PICKER MODAL -->
+<div class="modal-bg" id="monthPickerModalBg">
+  <div class="modal" style="max-width: 380px;">
+    <div class="modal-head">
+      <div class="t">JUMP TO MONTH</div>
+      <button id="closeMonthPicker"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg></button>
+    </div>
+    
+    <div class="month-picker-year-row">
+      <button class="year-btn" id="pickerPrevYear">&#8592; PREV</button>
+      <span id="pickerYearDisplay">2026</span>
+      <button class="year-btn" id="pickerNextYear">NEXT &#8594;</button>
+    </div>
+
+    <div class="month-grid-picker" id="monthGridPicker"></div>
+
+    <button class="btn-secondary" id="pickerCurrentMonthBtn" style="width:100%; margin-top:4px;">
+      Jump to Current Month
+    </button>
   </div>
 </div>
 
@@ -1938,6 +2090,60 @@ function generateBarcode() {
   }
   container.innerHTML = html;
 }
+
+// Month Quick-Picker Logic
+let pickerYear = viewDate.getFullYear();
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function openMonthPicker() {
+  pickerYear = viewDate.getFullYear();
+  renderMonthPickerGrid();
+  document.getElementById('monthPickerModalBg').classList.add('open');
+}
+
+function renderMonthPickerGrid() {
+  document.getElementById('pickerYearDisplay').textContent = pickerYear;
+  const currentMonthIdx = viewDate.getMonth();
+  const isCurrentYear = viewDate.getFullYear() === pickerYear;
+  
+  const grid = document.getElementById('monthGridPicker');
+  grid.innerHTML = MONTH_NAMES.map((m, idx) => `
+    <button type="button" class="month-grid-btn ${isCurrentYear && currentMonthIdx === idx ? 'active' : ''}" data-month="${idx}">
+      ${m}
+    </button>
+  `).join('');
+
+  grid.querySelectorAll('.month-grid-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const selectedMonth = parseInt(btn.dataset.month, 10);
+      viewDate = new Date(pickerYear, selectedMonth, 1);
+      document.getElementById('monthPickerModalBg').classList.remove('open');
+      renderCurrentTab();
+    });
+  });
+}
+
+document.getElementById('monthPickerBtn').addEventListener('click', openMonthPicker);
+document.getElementById('closeMonthPicker').addEventListener('click', () => {
+  document.getElementById('monthPickerModalBg').classList.remove('open');
+});
+document.getElementById('monthPickerModalBg').addEventListener('click', (e) => {
+  if (e.target.id === 'monthPickerModalBg') e.currentTarget.classList.remove('open');
+});
+
+document.getElementById('pickerPrevYear').addEventListener('click', () => {
+  pickerYear--;
+  renderMonthPickerGrid();
+});
+document.getElementById('pickerNextYear').addEventListener('click', () => {
+  pickerYear++;
+  renderMonthPickerGrid();
+});
+document.getElementById('pickerCurrentMonthBtn').addEventListener('click', () => {
+  viewDate = new Date();
+  document.getElementById('monthPickerModalBg').classList.remove('open');
+  renderCurrentTab();
+});
 
 // Navigation Listeners
 document.getElementById('prevMonth').addEventListener('click', () => {
