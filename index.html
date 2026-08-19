@@ -1478,43 +1478,29 @@
  * SINGAPORE LEDGER - CORE FRONTEND LOGIC & MULTI-TAB ENGINE
  */
 const CATEGORIES = [
-  { id: 'bus', label: 'Bus / MRT', color: '#B23A2E' },
-  { id: 'cab', label: 'Cab / Rideshare', color: '#D97706' },
-  { id: 'food', label: 'Food & Drinks', color: '#2F6E3B' },
-  { id: 'groceries', label: 'Groceries', color: '#235789' },
-  { id: 'medical', label: 'Medical & Health', color: '#8B5CF6' },
-  { id: 'household', label: 'Household & Bills', color: '#059669' },
-  { id: 'phone', label: 'Phone & Telco', color: '#0284C7' },
-  { id: 'shopping', label: 'Shopping', color: '#EC4899' },
-  { id: 'entertainment', label: 'Entertainment', color: '#F59E0B' },
-  { id: 'misc', label: 'Miscellaneous', color: '#6B7280' }
+  { id: 'bus', label: 'Bus / MRT', icon: '🚌', color: '#B23A2E' },
+  { id: 'cab', label: 'Cab / Rideshare', icon: '🚕', color: '#D97706' },
+  { id: 'food', label: 'Food & Drinks', icon: '🍜', color: '#2F6E3B' },
+  { id: 'groceries', label: 'Groceries', icon: '🛒', color: '#235789' },
+  { id: 'medical', label: 'Medical & Health', icon: '💊', color: '#8B5CF6' },
+  { id: 'household', label: 'Household & Bills', icon: '🏠', color: '#059669' },
+  { id: 'phone', label: 'Phone & Telco', icon: '📱', color: '#0284C7' },
+  { id: 'shopping', label: 'Shopping', icon: '🛍️', color: '#EC4899' },
+  { id: 'entertainment', label: 'Entertainment', icon: '🎬', color: '#F59E0B' },
+  { id: 'misc', label: 'Miscellaneous', icon: '📦', color: '#6B7280' }
 ];
 
-function catIcon(id, size = 15) {
-  const s = size;
-  const style = `width:${s}px;height:${s}px;display:inline-block;vertical-align:-2px;flex-shrink:0;`;
-  switch (id) {
-    case 'bus':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="15" rx="2"></rect><circle cx="7" cy="18" r="2"></circle><circle cx="17" cy="18" r="2"></circle><path d="M3 10h18"></path><line x1="7" y1="14" x2="7.01" y2="14"></line><line x1="17" y1="14" x2="17.01" y2="14"></line></svg>`;
-    case 'cab':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 3c-.1.3-.1.6-.1.8v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><circle cx="17" cy="17" r="2"></circle></svg>`;
-    case 'food':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>`;
-    case 'groceries':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>`;
-    case 'medical':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>`;
-    case 'household':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>`;
-    case 'phone':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>`;
-    case 'shopping':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>`;
-    case 'entertainment':
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>`;
-    default:
-      return `<svg style="${style}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>`;
-  }
+function catIcon(id) {
+  const c = CATEGORIES.find(c => c.id === id);
+  return c && c.icon ? c.icon : '📦';
+}
+function catLabel(id) {
+  const c = CATEGORIES.find(c => c.id === id);
+  return c && c.label ? c.label : 'Miscellaneous';
+}
+function catColor(id) {
+  const c = CATEGORIES.find(c => c.id === id);
+  return c && c.color ? c.color : '#6B7280';
 }
 
 const THEMES = ['classic', 'dark', 'minimal'];
@@ -1770,7 +1756,7 @@ function renderTape() {
   document.getElementById('catsBox').innerHTML = byCat.map(c => `
     <div class="cat-row" onclick="filterByCategory('${c.id}')">
       <div class="cat-row-top">
-        <span class="lbl" style="display:flex;align-items:center;gap:6px;">${catIcon(c.id, 14)} <span>${c.label}</span></span>
+        <span class="lbl"><span>${c.icon}</span> <span>${c.label}</span></span>
         <span class="val">S$${money(c.total)}</span>
       </div>
       <div class="bar-track">
@@ -1780,7 +1766,7 @@ function renderTape() {
   `).join('');
 
   const catFilter = document.getElementById('catFilter');
-  catFilter.innerHTML = '<option value="">All Categories</option>' + CATEGORIES.map(c => `<option value="${c.id}" ${selectedCategoryFilter === c.id ? 'selected' : ''}>${c.label}</option>`).join('');
+  catFilter.innerHTML = '<option value="">All Categories</option>' + CATEGORIES.map(c => `<option value="${c.id}" ${selectedCategoryFilter === c.id ? 'selected' : ''}>${c.icon} ${c.label}</option>`).join('');
 
   let filtered = monthExpenses;
   if (selectedCategoryFilter) filtered = filtered.filter(x => x.category === selectedCategoryFilter);
@@ -1803,7 +1789,7 @@ function renderTape() {
         <div class="mid">
           <div class="merchant">${escapeHtml(x.merchant)}</div>
           <div class="cat">
-            <span style="display:flex;align-items:center;gap:4px;">${catIcon(x.category, 13)} <span>${catLabel(x.category).toUpperCase()}</span></span>
+            <span>${catIcon(x.category)}</span> <span>${catLabel(x.category).toUpperCase()}</span>
             ${x.note ? `<span class="note-preview"> • ${escapeHtml(x.note)}</span>` : ''}
           </div>
         </div>
@@ -1915,7 +1901,7 @@ function renderCharts() {
 
       legendHtml += `
         <div class="legend-item">
-          <span style="display:flex;align-items:center;gap:5px;"><span class="legend-color-dot" style="background:${c.color}"></span>${catIcon(c.id, 13)} <span>${c.label}</span></span>
+          <span><span class="legend-color-dot" style="background:${c.color}"></span><span>${c.icon}</span> ${c.label}</span>
           <b>S$${money(c.total)} (${Math.round(fraction * 100)}%)</b>
         </div>
       `;
@@ -2206,7 +2192,7 @@ function renderCategoryButtons() {
   const grid = document.getElementById('catGrid');
   grid.innerHTML = CATEGORIES.map(c => `
     <button type="button" class="cat-btn ${c.id === currentDraft.category ? 'active' : ''}" data-cat="${c.id}">
-      ${catIcon(c.id, 14)} <span>${c.label}</span>
+      <span>${c.icon}</span> ${c.label}
     </button>
   `).join('');
 
